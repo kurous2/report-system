@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Models\Category;
 
 class CategorySeeder extends Seeder
 {
@@ -11,6 +12,24 @@ class CategorySeeder extends Seeder
      */
     public function run()
     {
-        //
+        $categories = [
+            [
+                'nama' => 'Kemahasiswaan',
+            ],
+            [
+                'nama' => 'Sarana Prasarana',
+            ],
+            [
+                'nama' => 'MIS',
+            ],
+            [
+                'nama' => 'Tenaga Pendidik',
+            ],
+
+        ];
+
+        foreach($categories as $key => $category){
+            Category::create($category);
+        }
     }
 }
