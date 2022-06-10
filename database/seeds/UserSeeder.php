@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
     	for($i = 1; $i <= 10; $i++){
     		User::create([
                 'email' => $faker->unique()->email,
-    			'nrp' => $faker->unique()->creditCardNumber,
+    			'nrp' => $faker->unique()->numerify('##########'),
                 'nama' => $faker->name,
     			'prodi' => $faker->randomElement($array = 
                     array ('D4 Teknik Informatika','D4 Teknik Elektro','D4 Mekatronika','D4 Teknologi Game',
