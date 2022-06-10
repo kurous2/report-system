@@ -26,9 +26,21 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'auth'], function ($router) {
     Route::post('register', 'AuthController@register');
     Route::post('login', 'AuthController@login');
+    Route::post('me', 'AuthController@me');
     Route::post('refresh', 'AuthController@refresh');
     Route::post('logout', 'AuthController@logout');
-
-    // Route::post('change-email', 'AuthController@changeEmail');
-    // Route::post('change-password', 'AuthController@changePassword');
 });
+
+Route::group(['prefix' => 'category'], function ($router) {
+    Route::get('/', 'CategoryController@index');
+});
+
+Route::group(['prefix' => 'laporan', 'middleware' => ['auth']], function ($router) {
+    Route::get('/', 'LaporanController@index');
+    Route::post('/', 'LaporanController@store');
+    Route::get('/{id}', 'LaporanController@show');
+    Route::put('/{id}', 'LaporanController@update');
+    Route::delete('/{id}', 'LaporanController@destroy');
+});
+
+Route::get('/images/{file_name}', 'LaporanController@getImage');

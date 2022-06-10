@@ -93,7 +93,12 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json(auth()->user());
+        return ResponseFormatter::success(
+            [
+                'user' => auth()->user()
+            ],
+            'Data user berhasil diambil'
+        );
     }
 
     /**
@@ -105,7 +110,10 @@ class AuthController extends Controller
     {
         auth()->logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return ResponseFormatter::success(
+            [],
+            'Successfully logged out'
+        );
     }
 
     /**
@@ -115,7 +123,14 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(auth()->refresh());
+        return ResponseFormatter::success(
+            [
+                'token' => auth()->refresh(),
+                'token_type' => 'bearer',
+                'expires_in' => auth()->factory()->getTTL() * 60,
+            ],
+            'Token Refresh Success'
+        );
     }
 
     /**
