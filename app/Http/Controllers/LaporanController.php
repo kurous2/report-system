@@ -22,7 +22,7 @@ class LaporanController extends Controller
 
         return ResponseFormatter::success(
             [
-                'categories' => $laporans,
+                'laporans' => $laporans,
             ],
             'Data Laporan berhasil diambil'
         );
@@ -46,35 +46,51 @@ class LaporanController extends Controller
      */
     public function store(Request $request)
     {
+        // Validasi Request
         $request->validate([
+            'subjek' => ['required', 'string', 'max:64'],
             'unit' => ['required', 'string', 'max:64'],
             'uraian' => ['required', 'string', 'max:4000'],
-            'solusi' => ['required', 'string', 'max:4000'],
-            'gambar' => ['required', 'mimes:jpg,jpeg,png', 'max:1024'],
+            'solusi' => ['string', 'max:4000'],
+            'gambar' => ['mimes:jpg,jpeg,png', 'max:1024'],
             'categories_id' => ['required', 'exists:App\Models\Category,id'],
-        ]);
+        ]);       
 
-        // Simpan Gambar Kedalam Storage
-        $originalName =  $request->gambar->getClientOriginalName();
-        $fileName = pathinfo($originalName, PATHINFO_FILENAME) . '_' .time() . '.' . pathinfo($originalName, PATHINFO_EXTENSION);
-
-        // Simpan File ke dalam storage
-        $path = "private/images";        
-        $filePath = Storage::putFileAs(
-            $path,
-            $request->file('gambar'), 
-            $fileName
-        );
-
+        // Create Laporan
         try {
-            $laporan = Laporan::create([                
+            $laporan = Laporan::create([     
+                'subjek' => $request->subjek,     
                 'unit' => $request->unit,
                 'uraian' => $request->uraian,
-                'solusi' => $request->solusi,
-                'gambar' => $fileName,
+                'status' => 'Active',
                 'categories_id' => $request->categories_id,
                 'users_id' => Auth::id()
             ]);
+
+            // Jika ada file gambar
+            if($request->gambar != null){
+                // Simpan Gambar Kedalam Storage
+                $originalName =  $request->gambar->getClientOriginalName();
+                $fileName = pathinfo($originalName, PATHINFO_FILENAME) . '_' .time() . '.' . pathinfo($originalName, PATHINFO_EXTENSION);
+    
+                // Simpan File ke dalam storage
+                $path = "private/images";        
+                $filePath = Storage::putFileAs(
+                    $path,
+                    $request->file('gambar'), 
+                    $fileName
+                );
+
+                // update ke database
+                $laporan->gambar = $fileName;
+                $laporan->save();
+            }
+
+            // jika ada solusi disimpan
+            if($request->solusi != null){
+                $laporan->solusi = $request->solusi;
+                $laporan->save();
+            }
 
             return ResponseFormatter::success(
                 [
@@ -101,7 +117,23 @@ class LaporanController extends Controller
      */
     public function show($id)
     {
-        //
+        $laporan = Laporan::with(['category','user'])->find($id);
+
+        if($laporan)
+        {
+            return ResponseFormatter::success(
+                [
+                    'laporan' => $laporan
+                ],
+                'Get laporan data success'
+            );
+        }else{
+            return ResponseFormatter::error(
+                null,
+                'Laporan not found',
+                404
+            );
+        }
     }
 
     /**
@@ -111,8 +143,8 @@ class LaporanController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
-    {
-        //
+    {        
+        // 
     }
 
     /**
@@ -124,7 +156,78 @@ class LaporanController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // Validasi Request
+        $request->validate([
+            'subjek' => ['required', 'string', 'max:64'],
+            'unit' => ['required', 'string', 'max:64'],
+            'uraian' => ['required', 'string', 'max:4000'],
+            'solusi' => ['string', 'max:4000'],
+            'gambar' => ['mimes:jpg,jpeg,png', 'max:1024'],
+            'categories_id' => ['required', 'exists:App\Models\Category,id'],
+        ]);
+        
+        // Cek apakah laporan ada
+        $laporan = Laporan::find($id);
+
+        if(!$laporan)
+        {
+            return ResponseFormatter::error(
+                null,
+                'Laporan not found',
+                404
+            );
+        }        
+
+        if($request->gambar != null){
+            // Simpan Gambar Kedalam Storage
+            $originalName =  $request->gambar->getClientOriginalName();
+            $fileName = pathinfo($originalName, PATHINFO_FILENAME) . '_' .time() . '.' . pathinfo($originalName, PATHINFO_EXTENSION);
+
+            // Simpan File ke dalam storage
+            $path = "private/images";        
+            $filePath = Storage::putFileAs(
+                $path,
+                $request->file('gambar'), 
+                $fileName
+            );
+
+            // update ke database
+            $laporan->gambar = $fileName;
+            $laporan->save();
+        }
+
+        // jika ada solusi disimpan
+        if($request->solusi != null){
+            $laporan->solusi = $request->solusi;
+            $laporan->save();
+        }        
+
+        // Update Laporan
+        try {
+            $laporan->update([
+                'subjek' => $request->subjek,                
+                'unit' => $request->unit,
+                'uraian' => $request->uraian,                
+                'categories_id' => $request->categories_id,
+            ]);
+
+            $laporan = Laporan::find($id);
+
+            return ResponseFormatter::success(
+                [
+                    'laporan' => $laporan
+                ],
+                'Laporan updated successfully'
+            );
+                    
+        } catch (\Exception $e) {
+            return ResponseFormatter::error(
+                [
+                    'error' => $e,
+                ],
+                'Update laporan failed!'
+            );
+        }
     }
 
     /**
@@ -135,13 +238,27 @@ class LaporanController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $laporan = Laporan::find($id);
+        $laporan->delete();
+        return ResponseFormatter::success(
+            null,
+            'Laporan deleted successfully'
+        );
     }
 
     public function getImage($file_name){
         // Direktori file
-        $path = "private/documents/{$file_name}";
+        $path = "private/images/{$file_name}";
 
-
+        // Kembalikan File
+        if(Storage::exists($path)){
+            return Storage::download($path);
+        }else{
+            return ResponseFormatter::error(
+                null,
+                'Image not found',
+                404
+            );
+        }
     }
 }

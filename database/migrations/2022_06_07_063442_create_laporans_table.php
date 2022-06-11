@@ -15,10 +15,12 @@ class CreateLaporansTable extends Migration
     {
         Schema::create('laporans', function (Blueprint $table) {
             $table->id();
+            $table->string('subjek');
             $table->string('unit');
             $table->string('uraian', 4000);
-            $table->string('solusi', 4000);
-            $table->string('gambar');
+            $table->string('solusi', 4000)->nullable();
+            $table->string('gambar')->nullable();
+            $table->string('status');
             $table->bigInteger('categories_id');
             $table->bigInteger('users_id');
             $table->timestamps();

@@ -9,10 +9,12 @@ use App\Models\Category;
 class Laporan extends Model
 {
     protected $fillable = [
+        'subjek',
         'unit',
         'uraian',
         'solusi',
         'gambar',
+        'status',
         'categories_id',
         'users_id',
     ];

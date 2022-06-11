@@ -97,7 +97,7 @@ class AuthController extends Controller
             [
                 'user' => auth()->user()
             ],
-            'Data user berhasil diambil'
+            'Get user data success'
         );
     }
 
@@ -111,7 +111,7 @@ class AuthController extends Controller
         auth()->logout();
 
         return ResponseFormatter::success(
-            [],
+            null,
             'Successfully logged out'
         );
     }

@@ -18,12 +18,14 @@ class LaporanSeeder extends Seeder
  
     	for($i = 1; $i <= 10; $i++){
     		Laporan::create([
+                'subjek' => $faker->realText($maxNbChars = 30, $indexSize = 2),
                 'unit' => $faker->randomElement($array = 
                     array ('Manajemen','Departemen Elektro','Departemen Informatika dan Komputer','PLCC',
                     'Perpustakaan')),
     			'uraian' => $faker->realText($maxNbChars = 100, $indexSize = 2),
                 'solusi' => $faker->realText($maxNbChars = 100, $indexSize = 2),
-                'gambar' => $faker->imageUrl($width = 640, $height = 480),
+                'gambar' => 'https://picsum.photos/200/200',
+                'status' => $faker->randomElement($array = array ('Active', 'Inactive')),
                 'users_id' => $faker->numberBetween(1,9),
                 'categories_id' => $faker->numberBetween(1,4),
             ]);

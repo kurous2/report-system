@@ -16,7 +16,7 @@ class CategoryController extends Controller
             [
                 'categories' => $categories,
             ],
-            'Data Kategori berhasil diambil'
+            'Get category data success'
         );
     }
 }
