@@ -264,6 +264,49 @@ class LaporanController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    public function giveResponse(Request $request, $id)
+    {
+        // Validasi Request
+        $request->validate([
+            'tanggapan' => ['required', 'string', 'max:4000'],
+        ]);
+        
+        // Cek apakah laporan ada
+        $laporan = Laporan::find($id);
+
+        if(!$laporan)
+        {
+            return ResponseFormatter::error(
+                null,
+                'Laporan not found',
+                404
+            );
+        }        
+        // Update Laporan
+        try {
+            $laporan->update([
+                'tanggapan' => $request->tanggapan,                
+            ]);
+
+            $laporan = Laporan::find($id);
+
+            return ResponseFormatter::success(
+                [
+                    'laporan' => $laporan
+                ],
+                'Laporan updated successfully'
+            );
+                    
+        } catch (\Exception $e) {
+            return ResponseFormatter::error(
+                [
+                    'error' => $e,
+                ],
+                'Update laporan failed!'
+            );
+        }
+    }
+
     public function update(Request $request, $id)
     {
         // Validasi Request
