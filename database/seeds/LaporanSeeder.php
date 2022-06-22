@@ -25,9 +25,11 @@ class LaporanSeeder extends Seeder
     			'uraian' => $faker->realText($maxNbChars = 100, $indexSize = 2),
                 'solusi' => $faker->realText($maxNbChars = 100, $indexSize = 2),
                 'gambar' => 'https://picsum.photos/200/200',
-                'status' => $faker->randomElement($array = array ('Active', 'Inactive')),
+                'status' => $faker->randomElement($array = array ('Active', 'Selesai')),
                 'users_id' => $faker->numberBetween(1,9),
                 'categories_id' => $faker->numberBetween(1,4),
+                'vote' => $faker->numberBetween(1,10),
+                'tanggapan' => $faker->realText($maxNbChars = 100, $indexSize = 2),
             ]);
         }
     }

@@ -23,6 +23,8 @@ class CreateLaporansTable extends Migration
             $table->string('status');
             $table->bigInteger('categories_id');
             $table->bigInteger('users_id');
+            $table->bigInteger('vote')->nullable();
+            $table->string('tanggapan', 4000)->nullable();
             $table->timestamps();
         });
     }
