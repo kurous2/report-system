@@ -77,6 +77,7 @@ class AuthController extends Controller
                     'token' => $token,
                     'token_type' => 'bearer',
                     'expires_in' => auth()->factory()->getTTL() * 60,
+                    'user_id' => Auth::id(),
                 ],
                 'Login Successfull'
             );
@@ -126,6 +127,7 @@ class AuthController extends Controller
                 'token' => auth()->refresh(),
                 'token_type' => 'bearer',
                 'expires_in' => auth()->factory()->getTTL() * 60,
+                'user_id' => Auth::id(),
             ],
             'Token Refresh Success'
         );

@@ -48,4 +48,13 @@ Route::group(['prefix' => 'vote', 'middleware' => ['auth']], function ($router) 
     Route::post('/{id_laporan}/down', 'VoteController@downVote');
 });
 
+Route::group(['prefix' => 'user', 'middleware' => ['auth']], function ($router) {
+    Route::get('/laporanku', 'LaporanController@getByUser');
+});
+
+Route::group(['prefix' => 'home', 'middleware' => ['auth']], function ($router) {
+    Route::get('/', 'LaporanController@getCategoryCount');
+    Route::get('/{request}', 'LaporanController@getByCategory');
+});
+
 Route::get('/images/{file_name}', 'LaporanController@getImage');

@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Laporan;
+use App\Models\User;
+use App\Models\Category;
 use App\Helpers\ResponseFormatter;
 
 class LaporanController extends Controller
@@ -19,6 +21,13 @@ class LaporanController extends Controller
     public function index()
     {
         $laporans = Laporan::all();
+        
+        // foreach ($laporans->voters as $voter)
+        // {
+        //     if($voter->pivot->user_id == Auth::id()){
+        //         dd($voter->pivot->is_up_vote);
+        //     }
+        // }
 
         return ResponseFormatter::success(
             [
@@ -28,6 +37,112 @@ class LaporanController extends Controller
         );
     }
 
+    public function getByUser()
+    {
+        // $laporans = Laporan::all();
+        try {
+            if (Auth::id()==1) {
+                $laporan = Laporan::all();
+            } else {
+                $host = User::firstWhere('id', Auth::id());
+                if ($host == null)
+                    throw new ModelNotFoundException('Host with User ID ' . $this->id . ' Not Found', 0);
+
+                $laporan = Laporan::where('users_id', $host->id)->get();
+                // dd($laporan);
+            }
+         
+            // return $laporan;
+        
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'code' => 404,
+                'message' => 'Not Found',
+                'description' => $e->getMessage(),
+            ]);
+        }
+        return ResponseFormatter::success(
+            [
+                'laporans' => $laporan,
+            ],
+            'Data Laporan berhasil diambil'
+        );
+    }
+
+    public function getByCategory(string $request)
+    {
+        // $laporans = Laporan::all();
+        // $request->validate([
+        //     'nama' => ['string', 'max:64'],
+        // ]);
+        try {
+                $category = Category::firstWhere('nama', $request);
+                // dd($category->id);
+                if ($category == null)
+                    throw new ModelNotFoundException('Category ' . $request . ' Not Found', 0);
+
+                $laporan = Laporan::where('categories_id', $category->id)->get();
+            
+            // return $laporan;
+        
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'code' => 404,
+                'message' => 'Not Found',
+                'description' => $e->getMessage(),
+            ]);
+        }
+        return ResponseFormatter::success(
+            [
+                'laporans' => $laporan,
+            ],
+            'Data Laporan berhasil diambil'
+        );
+    }
+
+    public function getCategoryCount()
+    {
+        // $laporans = Laporan::all();
+        // $request->validate([
+        //     'nama' => ['string', 'max:64'],
+        // ]);
+        $graph = [];
+        $categories = Category::all();
+        foreach($categories as $arr ){
+            $laporans = count(Laporan::all());
+            $laporan = Laporan::where('categories_id',$arr->id)->get();
+            $count = count($laporan);
+            $presentase = ($count / $laporans) * 100;
+            // $category = array
+            array_push($graph, $arr->nama. " = ".$presentase."%");
+            // $graph = array();
+        }
+        // dd($graph);
+        // $category = 
+        // try {
+        //         $category = Category::firstWhere('nama', $request);
+        //         // dd($category->id);
+        //         if ($category == null)
+        //             throw new ModelNotFoundException('Category ' . $request . ' Not Found', 0);
+
+        //         $laporan = Laporan::where('categories_id', $category->id)->get();
+            
+        //     // return $laporan;
+        
+        // } catch (ModelNotFoundException $e) {
+        //     return response()->json([
+        //         'code' => 404,
+        //         'message' => 'Not Found',
+        //         'description' => $e->getMessage(),
+        //     ]);
+        // }
+        return ResponseFormatter::success(
+            [
+                'laporans' => $graph,
+            ],
+            'Data Laporan berhasil diambil'
+        );
+    }
     /**
      * Show the form for creating a new resource.
      *
