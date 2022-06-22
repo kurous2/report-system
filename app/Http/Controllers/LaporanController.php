@@ -21,27 +21,14 @@ class LaporanController extends Controller
     public function index()
     {
         $laporans = Laporan::all();
-        // try {
-        //     if (Auth::id()==1) {
-        //         $laporan = Laporan::all();
-        //     } else {
-        //         $host = User::firstWhere('id', Auth::id());
-        //         if ($host == null)
-        //             throw new ModelNotFoundException('Host with User ID ' . $this->id . ' Not Found', 0);
-
-        //         $laporan = Laporan::where('users_id', $host->id)->get();
-        //         // dd($laporan);
+        
+        // foreach ($laporans->voters as $voter)
+        // {
+        //     if($voter->pivot->user_id == Auth::id()){
+        //         dd($voter->pivot->is_up_vote);
         //     }
-         
-        //     // return $laporan;
-            
-        // } catch (ModelNotFoundException $e) {
-        //     return response()->json([
-        //         'code' => 404,
-        //         'message' => 'Not Found',
-        //         'description' => $e->getMessage(),
-        //     ]);
         // }
+
         return ResponseFormatter::success(
             [
                 'laporans' => $laporans,

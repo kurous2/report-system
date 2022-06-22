@@ -43,6 +43,11 @@ Route::group(['prefix' => 'laporan', 'middleware' => ['auth']], function ($route
     Route::delete('/{id}', 'LaporanController@destroy');
 });
 
+Route::group(['prefix' => 'vote', 'middleware' => ['auth']], function ($router) {
+    Route::post('/{id_laporan}/up', 'VoteController@upVote');
+    Route::post('/{id_laporan}/down', 'VoteController@downVote');
+});
+
 Route::group(['prefix' => 'user', 'middleware' => ['auth']], function ($router) {
     Route::get('/laporanku', 'LaporanController@getByUser');
 });

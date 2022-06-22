@@ -15,6 +15,8 @@ class Laporan extends Model
         'solusi',
         'gambar',
         'status',
+        'vote',
+        'tanggapan',
         'categories_id',
         'users_id',
     ];
@@ -27,5 +29,10 @@ class Laporan extends Model
     public function category()
     {
         return $this->belongsTo(Category::class, 'categories_id', 'id');
+    }
+
+    public function voters()
+    {
+        return $this->belongsToMany('App\Models\User', 'laporan_user');
     }
 }
