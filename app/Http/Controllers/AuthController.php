@@ -68,9 +68,7 @@ class AuthController extends Controller
 
         if (! $token = auth()->attempt($credentials)) {
             return ResponseFormatter::error(
-                [
-                    'error' => $e,
-                ],
+                null,
                 'Login Failed',
             );
         } else {
