@@ -35,7 +35,7 @@ class VoteController extends Controller
 
             // Simpan dalam pivot table
             $laporan = Laporan::find($id);
-            $laporan->voters()->attach(Auth::id(), ['is_up_vote' => 1]);
+            $laporan->voters()->attach(Auth::id(), ['is_up_vote' => true]);
 
             return ResponseFormatter::success(
                 [
@@ -77,7 +77,7 @@ class VoteController extends Controller
 
             // Simpan dalam pivot table
             $laporan = Laporan::find($id);
-            $laporan->voters()->attach(Auth::id(), ['is_up_vote' => 0]);
+            $laporan->voters()->attach(Auth::id(), ['is_up_vote' => false]);
 
             return ResponseFormatter::success(
                 [

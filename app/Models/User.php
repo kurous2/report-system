@@ -50,7 +50,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function votes()
     {
-        return $this->belongsToMany('App\Models\Laporan', 'laporan_user');
+        return $this->belongsToMany('App\Models\Laporan', 'laporan_user')->withPivot('is_up_vote');
     }
 
     public function getJWTIdentifier()

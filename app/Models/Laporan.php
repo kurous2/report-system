@@ -3,11 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Category;
 
 class Laporan extends Model
 {
+    protected $appends = ['is_voted', 'is_up_vote'];
+    
     protected $fillable = [
         'subjek',
         'unit',
@@ -33,6 +36,27 @@ class Laporan extends Model
 
     public function voters()
     {
-        return $this->belongsToMany('App\Models\User', 'laporan_user');
+        return $this->belongsToMany('App\Models\User', 'laporan_user')->withPivot('is_up_vote');
+    }
+
+    public function getIsVotedAttribute(){
+        if($this->voters()->where('laporan_user.user_id', Auth::id())->exists()){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function getIsUpVoteAttribute(){
+        if($this->getIsVotedAttribute()){
+            $is_up_vote = $this->voters()->where('laporan_user.user_id', Auth::id())->latest()->first()->pivot->is_up_vote;
+            if($is_up_vote == 1){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
     }
 }

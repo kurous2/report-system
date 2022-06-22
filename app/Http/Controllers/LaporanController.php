@@ -20,14 +20,9 @@ class LaporanController extends Controller
      */
     public function index()
     {
+        // $laporans = Laporan::with('voters')->get();
+
         $laporans = Laporan::all();
-        
-        // foreach ($laporans->voters as $voter)
-        // {
-        //     if($voter->pivot->user_id == Auth::id()){
-        //         dd($voter->pivot->is_up_vote);
-        //     }
-        // }
 
         return ResponseFormatter::success(
             [
