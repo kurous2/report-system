@@ -52,4 +52,8 @@ Route::group(['prefix' => 'home', 'middleware' => ['auth']], function ($router) 
     Route::get('/{request}', 'LaporanController@getByCategory');
 });
 
+Route::group(['prefix' => 'response', 'middleware' => ['auth']], function ($router) {
+    Route::put('/{id}', 'LaporanController@giveResponse');
+});
+
 Route::get('/images/{file_name}', 'LaporanController@getImage');
