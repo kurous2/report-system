@@ -82,19 +82,20 @@ class LaporanController extends Controller
         );
     }
 
-    public function getByCategory(string $cat)
+    public function getByCategory(string $request)
     {
         // $laporans = Laporan::all();
+        // $request->validate([
+        //     'nama' => ['string', 'max:64'],
+        // ]);
         try {
-        
-                $category = Category::firstWhere('nama', $cat);
-                if ($host == null)
-                    throw new ModelNotFoundException('Category ' . $cat . ' Not Found', 0);
+                $category = Category::firstWhere('nama', $request);
+                // dd($category->id);
+                if ($category == null)
+                    throw new ModelNotFoundException('Category ' . $request . ' Not Found', 0);
 
                 $laporan = Laporan::where('categories_id', $category->id)->get();
-                dd($category->id);
             
-         
             // return $laporan;
         
         } catch (ModelNotFoundException $e) {
@@ -107,6 +108,50 @@ class LaporanController extends Controller
         return ResponseFormatter::success(
             [
                 'laporans' => $laporan,
+            ],
+            'Data Laporan berhasil diambil'
+        );
+    }
+
+    public function getCategoryCount()
+    {
+        // $laporans = Laporan::all();
+        // $request->validate([
+        //     'nama' => ['string', 'max:64'],
+        // ]);
+        $graph = [];
+        $categories = Category::all();
+        foreach($categories as $arr ){
+            $laporans = count(Laporan::all());
+            $laporan = Laporan::where('categories_id',$arr->id)->get();
+            $count = count($laporan);
+            $presentase = ($count / $laporans) * 100;
+            // $category = array
+            array_push($graph, $arr->nama. " = ".$presentase."%");
+            // $graph = array();
+        }
+        // dd($graph);
+        // $category = 
+        // try {
+        //         $category = Category::firstWhere('nama', $request);
+        //         // dd($category->id);
+        //         if ($category == null)
+        //             throw new ModelNotFoundException('Category ' . $request . ' Not Found', 0);
+
+        //         $laporan = Laporan::where('categories_id', $category->id)->get();
+            
+        //     // return $laporan;
+        
+        // } catch (ModelNotFoundException $e) {
+        //     return response()->json([
+        //         'code' => 404,
+        //         'message' => 'Not Found',
+        //         'description' => $e->getMessage(),
+        //     ]);
+        // }
+        return ResponseFormatter::success(
+            [
+                'laporans' => $graph,
             ],
             'Data Laporan berhasil diambil'
         );

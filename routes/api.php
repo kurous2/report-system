@@ -48,7 +48,8 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth']], function ($router) 
 });
 
 Route::group(['prefix' => 'home', 'middleware' => ['auth']], function ($router) {
-    Route::get('/{cat}', 'LaporanController@getByCategory');
+    Route::get('/', 'LaporanController@getCategoryCount');
+    Route::get('/{request}', 'LaporanController@getByCategory');
 });
 
 Route::get('/images/{file_name}', 'LaporanController@getImage');
