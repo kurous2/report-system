@@ -43,4 +43,12 @@ Route::group(['prefix' => 'laporan', 'middleware' => ['auth']], function ($route
     Route::delete('/{id}', 'LaporanController@destroy');
 });
 
+Route::group(['prefix' => 'user', 'middleware' => ['auth']], function ($router) {
+    Route::get('/laporanku', 'LaporanController@getByUser');
+});
+
+Route::group(['prefix' => 'home', 'middleware' => ['auth']], function ($router) {
+    Route::get('/{cat}', 'LaporanController@getByCategory');
+});
+
 Route::get('/images/{file_name}', 'LaporanController@getImage');

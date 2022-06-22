@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Laporan;
+use App\Models\User;
+use App\Models\Category;
 use App\Helpers\ResponseFormatter;
 
 class LaporanController extends Controller
@@ -19,7 +21,27 @@ class LaporanController extends Controller
     public function index()
     {
         $laporans = Laporan::all();
+        // try {
+        //     if (Auth::id()==1) {
+        //         $laporan = Laporan::all();
+        //     } else {
+        //         $host = User::firstWhere('id', Auth::id());
+        //         if ($host == null)
+        //             throw new ModelNotFoundException('Host with User ID ' . $this->id . ' Not Found', 0);
 
+        //         $laporan = Laporan::where('users_id', $host->id)->get();
+        //         // dd($laporan);
+        //     }
+         
+        //     // return $laporan;
+            
+        // } catch (ModelNotFoundException $e) {
+        //     return response()->json([
+        //         'code' => 404,
+        //         'message' => 'Not Found',
+        //         'description' => $e->getMessage(),
+        //     ]);
+        // }
         return ResponseFormatter::success(
             [
                 'laporans' => $laporans,
@@ -28,6 +50,67 @@ class LaporanController extends Controller
         );
     }
 
+    public function getByUser()
+    {
+        // $laporans = Laporan::all();
+        try {
+            if (Auth::id()==1) {
+                $laporan = Laporan::all();
+            } else {
+                $host = User::firstWhere('id', Auth::id());
+                if ($host == null)
+                    throw new ModelNotFoundException('Host with User ID ' . $this->id . ' Not Found', 0);
+
+                $laporan = Laporan::where('users_id', $host->id)->get();
+                // dd($laporan);
+            }
+         
+            // return $laporan;
+        
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'code' => 404,
+                'message' => 'Not Found',
+                'description' => $e->getMessage(),
+            ]);
+        }
+        return ResponseFormatter::success(
+            [
+                'laporans' => $laporan,
+            ],
+            'Data Laporan berhasil diambil'
+        );
+    }
+
+    public function getByCategory(string $cat)
+    {
+        // $laporans = Laporan::all();
+        try {
+        
+                $category = Category::firstWhere('nama', $cat);
+                if ($host == null)
+                    throw new ModelNotFoundException('Category ' . $cat . ' Not Found', 0);
+
+                $laporan = Laporan::where('categories_id', $category->id)->get();
+                dd($category->id);
+            
+         
+            // return $laporan;
+        
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'code' => 404,
+                'message' => 'Not Found',
+                'description' => $e->getMessage(),
+            ]);
+        }
+        return ResponseFormatter::success(
+            [
+                'laporans' => $laporan,
+            ],
+            'Data Laporan berhasil diambil'
+        );
+    }
     /**
      * Show the form for creating a new resource.
      *
